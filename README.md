@@ -1,19 +1,23 @@
 # DeepCreamPy
 *Decensoring Hentai with Deep Neural Networks.*
 
+*DeepCreamPyV2 coming in Summer 2019*
+
 [![GitHub release](https://img.shields.io/github/release/deeppomf/DeepCreamPy.svg)](https://github.com/deeppomf/DeepCreamPy/releases/latest)
 [![GitHub downloads](https://img.shields.io/github/downloads/deeppomf/DeepCreamPy/latest/total.svg)](https://github.com/deeppomf/DeepCreamPy/releases/latest)
 [![GitHub downloads](https://img.shields.io/github/downloads/deeppomf/DeepCreamPy/total.svg)](https://github.com/deeppomf/DeepCreamPy/releases)
 [![GitHub issues](https://img.shields.io/github/issues/deeppomf/DeepCreamPy.svg)](https://github.com/deeppomf/DeepCreamPy/issues)
 [![Donate with PayPal](https://img.shields.io/badge/paypal-donate-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SAM6C6DQRDBAE)
-[![Project license](https://img.shields.io/github/license/deeppomf/DeepCreamPy.svg)](https://raw.githubusercontent.com/deeppomf/DeepCreamPy/develop/LICENSE)
+[![Project license](https://img.shields.io/github/license/deeppomf/DeepCreamPy.svg)](https://raw.githubusercontent.com/deeppomf/DeepCreamPy/master/LICENSE.txt)
 [![Twitter Follow](https://img.shields.io/twitter/follow/deeppomf.svg?label=Follow&style=social)](https://twitter.com/deeppomf/)
 
 A deep learning-based tool to automatically replace censored artwork in hentai with plausible reconstructions.
 
 The user colors censored regions green in an image editing program like GIMP or Photoshop. A neural network fills in the censored regions.
 
-DeepCreamPy has a pre-built binary for Windows 64-bit available [here](https://github.com/deeppomf/DeepCreamPy/releases/latest). DeepCreamPy works on Windows, Mac, and Linux.
+DeepCreamPy has a pre-built binary for Windows 64-bit available [here](https://github.com/deeppomf/DeepCreamPy/releases/latest). DeepCreamPy's code works on Windows, Mac, and Linux.
+
+Please before you open a new issue check [closed issues](https://github.com/deeppomf/DeepCreamPy/issues?q=is%3Aissue+is%3Aclosed) and check the [table of contents](https://github.com/deeppomf/DeepCreamPy#table-of-contents).
 
 <p align="center">
 	<img src="https://github.com/deeppomf/DeepCreamPy/blob/master/readme_images/mermaid_collage.png" width="800">
@@ -24,7 +28,6 @@ DeepCreamPy has a pre-built binary for Windows 64-bit available [here](https://g
 - Decensoring of ANY shaped censor (e.g. black lines, pink hearts, etc.)
 - Higher quality decensors
 - Support for mosaic decensors (WIP)
-- User interface (WIP)
 
 ## Limitations
 The decensorship is for color hentai images that have minor to moderate censorship of the penis or vagina. If a vagina or penis is completely censored out, decensoring will be ineffective.
@@ -51,14 +54,17 @@ Miscellaneous:
 * [FAQ](docs/FAQ.md)
 
 ## To do
-- Finish the user interface (estimated ???)
-- ~~Update model with better quality data (estimated November)~~
+- Switch to Deepfillv2 model
+- Enhance data collection and extraction
+- Use new training techniques
+- Resolve all Tensorflow compatibility problems
+- Finish the user interface
 - Add support for black and white images
 - Add error log
 
-Follow me on Twitter [@deeppomf](https://twitter.com/deeppomf) for project updates.
+Follow me on Twitter [@deeppomf](https://twitter.com/deeppomf) (NSFW Tweets) for project updates.
 
-Contributions are welcome! Special thanks to IAmTheRedSpy, 0xb8, deniszh, Smethan, mrmajik45, harjitmoe, itsVale, StartleStars, and SoftArmpit!
+Contributions are welcome! Special thanks to ccppoo, IAmTheRedSpy, 0xb8, deniszh, Smethan, mrmajik45, harjitmoe, itsVale, StartleStars, and SoftArmpit!
 
 ## License
 This project is licensed under GNU Affero General Public License v3.0.

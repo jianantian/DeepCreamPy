@@ -1,12 +1,20 @@
-import numpy as np
-from PIL import Image
-import os
+#!/usr/bin/env python3
 
-from copy import deepcopy
+try:
+    import numpy as np
+    from PIL import Image
+    import os
 
-import config
-from libs.pconv_hybrid_model import PConvUnet
-from libs.utils import *
+    from copy import deepcopy
+
+    import config
+    import file
+    from libs.pconv_hybrid_model import PConvUnet
+    from libs.utils import *
+except ImportError as err:
+    print("Error: ", err)
+    print("Could not import modules. Make sure all dependencies are installed.")
+    exit(1)
 
 class Decensor:
 
@@ -14,7 +22,7 @@ class Decensor:
         self.args = config.get_args()
         self.is_mosaic = self.args.is_mosaic
 
-        self.mask_color = [self.args.mask_color_red/255.0, self.args.mask_color_green/255.0, self.args.mask_color_blue/255.0]
+        self.mask_color = [float(v/255) for v in self.args.mask_color] # normalize mask color
 
         if not os.path.exists(self.args.decensor_output_path):
             os.makedirs(self.args.decensor_output_path)
@@ -40,6 +48,12 @@ class Decensor:
         #self.load_model()
         color_dir = self.args.decensor_input_path
         file_names = os.listdir(color_dir)
+        
+        input_dir = self.args.decensor_input_path
+        output_dir = self.args.decensor_output_path
+        
+        # Change False to True before release --> file.check_file( input_dir, output_dir, True)
+        file_names, self.files_removed = file.check_file( input_dir, output_dir, False)
 
         #convert all images into np arrays and put them in a list
         for file_name in file_names:
@@ -48,7 +62,14 @@ class Decensor:
             if os.path.isfile(color_file_path) and color_ext.casefold() == ".png":
                 print("--------------------------------------------------------------------------")
                 print("Decensoring the image {}".format(color_file_path))
-                colored_img = Image.open(color_file_path)
+                try :
+                    colored_img = Image.open(color_file_path)
+                except:
+                    print("Cannot identify image file (" +str(color_file_path)+")")
+                    self.files_removed.append((color_file_path,3))
+                    # incase of abnormal file format change (ex : text.txt -> text.png)
+                    continue
+                    
                 #if we are doing a mosaic decensor
                 if self.is_mosaic:
                     #get the original file that hasn't been colored
@@ -64,15 +85,21 @@ class Decensor:
                             self.decensor_image(ori_img, colored_img, file_name)
                             break
                     else: #for...else, i.e if the loop finished without encountering break
-                        print("Corresponding original, uncolored image not found in {}.".format(ori_file_path))
+                        print("Corresponding original, uncolored image not found in {}".format(color_file_path))
                         print("Check if it exists and is in the PNG or JPG format.")
                 else:
                     self.decensor_image(colored_img, colored_img, file_name)
+            else:
+                print("--------------------------------------------------------------------------")
+                print("Iregular file deteced : "+str(color_file_path))
         print("--------------------------------------------------------------------------")
-
+        if(self.files_removed is not None):
+            file.error_messages(None, self.files_removed)
+        input("\nPress anything to end...")
+        
     #decensors one image at a time
     #TODO: decensor all cropped parts of the same image in a batch (then i need input for colored an array of those images and make additional changes)
-    def decensor_image(self, ori, colored, file_name):
+    def decensor_image(self, ori, colored, file_name=None):
         width, height = ori.size
         #save the alpha channel if the image has an alpha channel
         has_alpha = False
@@ -101,11 +128,11 @@ class Decensor:
             mask = self.get_mask(ori_array)
 
         #colored image is only used for finding the regions
-        regions = find_regions(colored.convert('RGB'))
+        regions = find_regions(colored.convert('RGB'), [v*255 for v in self.mask_color]) #unnormalize the color so it can check against pixels
         print("Found {region_count} censored regions in this image!".format(region_count = len(regions)))
 
         if len(regions) == 0 and not self.is_mosaic:
-            print("No green regions detected!")
+            print("No green regions detected! Make sure you're using exactly the right color.")
             return
 
         output_img_array = ori_array[0].copy()
@@ -186,13 +213,17 @@ class Decensor:
 
         output_img = Image.fromarray(output_img_array.astype('uint8'))
 
-        #save the decensored image
-        #file_name, _ = os.path.splitext(file_name)
-        save_path = os.path.join(self.args.decensor_output_path, file_name)
-        output_img.save(save_path)
+        if file_name != None:
+            #save the decensored image
+            #file_name, _ = os.path.splitext(file_name)
+            save_path = os.path.join(self.args.decensor_output_path, file_name)
+            output_img.save(save_path)
 
-        print("Decensored image saved to {save_path}!".format(save_path=save_path))
-        return
+            print("Decensored image saved to {save_path}!".format(save_path=save_path))
+            return
+        else:
+            print("Decensored image. Returning it.")
+            return output_img
 
 if __name__ == '__main__':
     decensor = Decensor()
